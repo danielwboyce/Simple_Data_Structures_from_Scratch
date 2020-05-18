@@ -2,6 +2,17 @@ class HashMap:
   def __init__(self, array_size):
     self.array_size = array_size
     self.array = [None for item in range(array_size)]
+    self.size = 0
+
+  def has_space(self):
+    return self.array_size > self.size
+
+  # possible return values are None, True, or False
+  def key_match(self, key, index):
+    if self.array[index] is None:
+      return None
+    else:
+      return key is self.array[index][0]
 
   def hash(self, key, count_collisions=0):
     key_bytes = key.encode()
@@ -10,6 +21,17 @@ class HashMap:
 
   def compressor(self, hash_code):
     return hash_code % self.array_size
+
+  # given a key, this returns the index where the key has an entry
+  # or None if it doesn't find one
+  def index_finder(self, key):
+    collisions = 0
+    array_index = self.compressor(self.hash(key))
+
+  # given a key, this returns an empty index where the keypair can be
+  # save
+  def empty_finder(self, key):
+    pass
 
   def assign(self, key, value):
     array_index = self.compressor(self.hash(key))
