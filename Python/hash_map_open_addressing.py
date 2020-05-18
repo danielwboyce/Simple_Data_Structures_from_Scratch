@@ -28,67 +28,61 @@ class HashMap:
     collisions = 0
     array_index = self.compressor(self.hash(key))
 
+    if self.array[array_index] is None:
+      return None
+    elif self.key_match(key, array_index):
+      return array_index
+    else:
+      while (self.array[array_index + collisions][0] is not key):
+        if collisions is self.array_size:
+          return None
+        collisions += 1
+      return array_index + collisions
+
   # given a key, this returns an empty index where the keypair can be
-  # save
+  # saved. if the array is full it returns None
   def empty_finder(self, key):
-    pass
+    if not self.has_space():
+      return None
+    else:
+      array_index = self.compressor(self.hash(key))
+      collisions = 0
+      if self.array[array_index] is None:
+        return array_index
+      else:
+        while(self.array[array_index + collisions] is not None):
+          if collisions is self.array_size:
+            return None
+          collisions += 1
+        return array_index + collisions
 
   def assign(self, key, value):
-    array_index = self.compressor(self.hash(key))
-    current_array_value = self.array[array_index]
-
-    if current_array_value is None:
-      self.array[array_index] = [key, value]
+    if self.has_space() is False:
       return
-
-    if current_array_value[0] == key:
-      self.array[array_index] = [key, value]
-      return
-
-    # Collision!
-
-    number_collisions = 1
-
-    while(current_array_value[0] != key):
-      new_hash_code = self.hash(key, number_collisions)
-      new_array_index = self.compressor(new_hash_code)
-      current_array_value = self.array[new_array_index]
-
-      if current_array_value is None:
-        self.array[new_array_index] = [key, value]
+    else:
+      found_index = self.index_finder(key)
+      if found_index is None:
+        new_index = self.empty_finder(key)
+        self.array[new_index] = [key, value]
+        self.size += 1
         return
-
-      if current_array_value[0] == key:
-        self.array[new_array_index] = [key, value]
+      else:
+        self.array[found_index] = [key, value]
         return
-
-      number_collisions += 1
-
-    return
 
   def retrieve(self, key):
-    array_index = self.compressor(self.hash(key))
-    possible_return_value = self.array[array_index]
-
-    if possible_return_value is None:
+    array_index = self.index_finder(key)
+    if array_index is None:
       return None
+    else:
+      return self.array[array_index][1]
 
-    if possible_return_value[0] == key:
-      return possible_return_value[1]
+  def delete(self, key):
+    array_index = self.index_finder(key)
+    if array_index is None:
+      return
+    else:
+      self.array[array_index] = None
+      self.size -= 1
+      return
 
-    retrieval_collisions = 1
-
-    while (possible_return_value != key):
-      new_hash_code = self.hash(key, retrieval_collisions)
-      retrieving_array_index = self.compressor(new_hash_code)
-      possible_return_value = self.array[retrieving_array_index]
-
-      if possible_return_value is None:
-        return None
-
-      if possible_return_value[0] == key:
-        return possible_return_value[1]
-
-      retrieval_collisions += 1
-
-    return
