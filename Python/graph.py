@@ -15,6 +15,7 @@ class Vertex:
 # Can be initialized as a directed graph
 # Stores every vertex inside a dictionary (vertex data is key and vertex is value)
 # has methods to add vertices, edges between vertices, and determine if a path exists between to vertices
+# TODO:Pathfinding only says IF there's a path, but doesn't say return the path
 # TODO:Pathfinding does not handle weighted edges yet
 class Graph:
   def __init__(self, directed = False):
